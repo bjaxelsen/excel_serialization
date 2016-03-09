@@ -1,11 +1,6 @@
-Notes about the CSV encoder
+Notes about the Excel encoder
 --------------------------------------------------------------------------------
 
-The CSV format has a number of inherent limitations not present in other formats
-(e.g., JSON or XML). Namely, they are:
-* A CSV cannot support an array with a depth greater than three
-* Each row in a CSV must share a common set of headers with all other rows
-
-For these reasons, the CSV format is not well-suited for encoding all data 
-structures--only data with a specific structure. The provided CSV encoder
- does not support data structures that do not meet these limitations.
+This is a Excel 2007 export encoder for Drupal 8. It is not ready as a generic
+module, it is just code made for a specific website. I hope someone will take the
+steps forward to make it generically usable for everyone.
