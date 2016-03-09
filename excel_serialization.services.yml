@@ -1,0 +1,10 @@
+services:
+  excel_serialization.encoder.xlsx:
+    class: Drupal\excel_serialization\Encoder\ExcelEncoder
+    arguments: ['@entity_field.manager', '@entity_type.manager', '@country_manager']
+    tags:
+      - { name: encoder, format: xlsx }
+  excel_serialization.excelsubscriber:
+    class: Drupal\excel_serialization\EventSubscriber\ExcelSubscriber
+    tags:
+      - { name: event_subscriber }

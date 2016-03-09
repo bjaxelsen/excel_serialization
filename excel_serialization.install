@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * Implements hook_requirements().
+ */
+function excel_serialization_requirements($phase) {
+  $requirements = [];
+  if ($phase == 'install') {
+    if (!class_exists('\PHPExcel')) {
+      $requirements['phpexcel'] = [
+        'description' => t('Excel Serialization requires the phpoffice\phpexcel library.'),
+        'severity' => REQUIREMENT_ERROR,
+      ];
+    }
+  }
+  return $requirements;
+}

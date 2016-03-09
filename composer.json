@@ -1,0 +1,9 @@
+{
+  "name": "drupal/excel_serialization",
+  "description": "Provides Excel 2007 (.xlsx) as a serialization format.",
+  "type": "drupal-module",
+  "license": "GPL-2.0+",
+  "require": {
+    "phpoffice/phpexcel": "^1.8.1"
+  }
+}
