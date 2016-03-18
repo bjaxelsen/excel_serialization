@@ -222,7 +222,7 @@ class ExcelEncoder implements EncoderInterface {
    *
    */
   protected function formatValue($value) {
-    $value = utf8_decode($value);
+    $value = $value;
 
     return $value;
   }
@@ -252,7 +252,7 @@ class ExcelEncoder implements EncoderInterface {
     unset($first_row['access']);
     unset($first_row['login']);
     $fieldnames = array_merge(
-      ['field_name'],
+      ['field_name_given', 'field_name'],
       array_keys($first_row),
       ['status', 'created','changed', 'access', 'login']
     );
