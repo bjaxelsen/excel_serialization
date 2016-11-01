@@ -205,6 +205,15 @@ class ExcelEncoder implements EncoderInterface {
           $value = date(DATE_ISO8601, $value);
         }
       }
+      elseif (isset($row[$column['name']][0]['target_id'])) {
+        $id = $row[$column['name']][0]['target_id'];
+        if (isset($column['taxonomy_term'])) {
+          $term = $entity_managers['taxonomy_term']->load($id);
+          if (!empty($term)) {
+            $value = $term->getName();
+          }
+        }
+      }
       $formatted_row[] = $value;
     }
 
@@ -245,6 +254,9 @@ class ExcelEncoder implements EncoderInterface {
 
     // Give priority to user name
     unset($first_row['field_name']);
+    // Highest education attained should be just after short course.
+    unset($first_row['field_short_courses']);
+    unset($first_row['field_highest_education_attained']);
     // And last priority to statistics
     unset($first_row['status']);
     unset($first_row['created']);
@@ -254,6 +266,7 @@ class ExcelEncoder implements EncoderInterface {
     $fieldnames = array_merge(
       ['field_name_given', 'field_name'],
       array_keys($first_row),
+      ['field_short_courses', 'field_highest_education_attained'],
       ['status', 'created','changed', 'access', 'login']
     );
 
@@ -270,14 +283,17 @@ class ExcelEncoder implements EncoderInterface {
       'ds_switch',
       'path',
       'user_picture',
-      'field_institution' // This is due to e view relationship for the main view
+      'field_institution', // This is due to e view relationship for the main view
+      'field_linkedin_profile'
     ];
 
     $fieldnames = array_diff($fieldnames, $remove_fields);
 
+    // Paragraph fields with bundle, cardinality and fields to be skipped.
     $paragraph_fields = [
-      'field_jobs' => 'job',
-      'field_scholarships' => 'scholarship'
+      'field_jobs' => ['bundle' => 'job', 'count' => 2, 'skip_fields' => []],
+      'field_scholarships' => ['bundle' => 'scholarship', 'count' => 2, 'skip_fields' => []],
+      'field_short_courses' => ['bundle' => 'short_course', 'count' => 1, 'skip_fields' => ['field_course']]
     ];
 
     $datetime_fields = [
@@ -296,20 +312,18 @@ class ExcelEncoder implements EncoderInterface {
       'field_institution',
       'field_qualification',
       'field_sector',
-      'field_area'
+      'field_area',
+      'field_highest_education_attained'
     ];
-
-    // We hardcode how many paragraph items to show
-    $paragraph_count = 2;
 
     foreach ($fieldnames as $field_name) {
       // Special handling for paragraphs
       if (isset($paragraph_fields[$field_name])) {
         // Add the regular fields of the paragraph
-        $paragraph_subfields = $this->entityFieldManager->getFieldDefinitions('paragraph', $paragraph_fields[$field_name]);
-        for ($i = 0; $i < $paragraph_count; $i++) {
+        $paragraph_subfields = $this->entityFieldManager->getFieldDefinitions('paragraph', $paragraph_fields[$field_name]['bundle']);
+        for ($i = 0; $i < $paragraph_fields[$field_name]['count']; $i++) {
           foreach ($paragraph_subfields as $paragraph_subfield_name => $paragraph_subfield) {
-            if (strpos($paragraph_subfield_name, 'field_') === 0) {
+            if (strpos($paragraph_subfield_name, 'field_') === 0 && !in_array($paragraph_subfield_name, $paragraph_fields[$field_name]['skip_fields'])) {
               $label = $paragraph_subfield_name . '_' . ($i + 1);
               $this->columns[] = [
                 'name' => $paragraph_subfield_name,
