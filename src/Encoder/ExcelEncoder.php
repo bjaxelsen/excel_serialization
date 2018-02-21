@@ -96,12 +96,6 @@ class ExcelEncoder implements EncoderInterface {
     }
 
     try {
-      // Bump up memory limit
-      ini_set('memory_limit', '2G');
-
-      // Bump up max. execution time
-      set_time_limit(180);
-
       // Create a new PHPExcel Object
       $objPHPExcel = new \PHPExcel();
 
